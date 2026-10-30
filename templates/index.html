@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PixelLies</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@1,600;1,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --mocha: #6F4E37;
+    --mocha-deep: #5a3e2b;
+    --silver: #E5E4E2;
+    --lavender: #E6E0F0;
+    --line: rgba(230, 224, 240, .35);
+    --serif: 'Bodoni Moda', 'Didot', 'Bodoni 72', Georgia, serif;
+    --sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--mocha);
+    color: var(--silver);
+    font: 16px/1.6 var(--sans);
+  }
+  main { max-width: 760px; margin: 0 auto; padding: 28px 22px 48px; position: relative; overflow: hidden; }
+
+  nav {
+    display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+    padding-bottom: 14px; border-bottom: 1px solid var(--line);
+  }
+
+  header { position: relative; padding: 44px 0 36px; }
+  .eyebrow { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; line-height: 1.9; margin: 0 0 18px; }
+  h1 {
+    font: italic 700 clamp(60px, 15vw, 118px)/.9 var(--serif);
+    color: var(--lavender);
+    margin: 0 0 22px;
+    text-transform: uppercase;
+    position: relative; z-index: 1;
+  }
+  h1 span { display: block; margin-left: .55em; }
+  .intro { max-width: 340px; margin: 0; position: relative; z-index: 1; }
+  .blob { position: absolute; right: -40px; top: 30px; width: min(62vw, 380px); height: auto; z-index: 0; }
+
+  .panel { border: 1px solid var(--line); padding: 22px; margin-bottom: 26px; background: rgba(90, 62, 43, .55); position: relative; z-index: 1; }
+  .label { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; margin: 0 0 14px; display: block; }
+
+  .drop { display: block; border: 1px dashed var(--line); padding: 26px 12px; text-align: center; cursor: pointer; }
+  .drop:hover, .drop:focus-within { border-color: var(--lavender); background: rgba(230, 224, 240, .07); }
+  .drop b { display: block; font: italic 600 22px/1.3 var(--serif); color: var(--lavender); margin-bottom: 4px; }
+  .drop input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  #fname { display: block; margin-top: 8px; font-size: 14px; color: var(--lavender); word-break: break-all; }
+
+  .go { display: flex; align-items: center; gap: 14px; margin-top: 18px; }
+  button {
+    width: 54px; height: 54px; border-radius: 50%; flex: none;
+    border: 1px solid var(--lavender); background: transparent; color: var(--lavender);
+    font-size: 22px; cursor: pointer;
+  }
+  button:hover { background: var(--lavender); color: var(--mocha); }
+  button:disabled { opacity: .5; cursor: wait; }
+  .go span { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; }
+  :focus-visible { outline: 2px solid var(--lavender); outline-offset: 3px; }
+  .error { margin: 16px 0 0; color: var(--lavender); font-style: italic; }
+
+  .shot { display: block; max-width: 100%; max-height: 300px; margin: 0 auto 22px; border: 1px solid var(--line); }
+  .verdict { text-align: center; padding: 20px 10px; margin-bottom: 24px; border: 1px solid var(--lavender); }
+  .verdict em { display: block; font: italic 700 clamp(28px, 7vw, 40px)/1.1 var(--serif); text-transform: uppercase; }
+  .verdict small { display: block; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; margin-top: 8px; }
+  .verdict.fake { background: var(--lavender); color: var(--mocha-deep); }
+  .verdict.real { color: var(--lavender); }
+  .verdict.split { border-style: dashed; }
+
+  .judge { margin-bottom: 18px; }
+  .judge:last-child { margin-bottom: 0; }
+  .row { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px; }
+  .bar { height: 14px; border: 1px solid var(--line); padding: 2px; }
+  .fill {
+    height: 100%; width: var(--w); color: var(--lavender);
+    animation: grow .9s steps(14) both;
+    background: repeating-linear-gradient(90deg, currentColor 0 7px, transparent 7px 9px);
+  }
+  .fill.fake { color: var(--silver); }
+  @keyframes grow { from { width: 0; } }
+
+  .foot { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; line-height: 2; text-align: center; padding-top: 14px; border-top: 1px solid var(--line); margin: 0; }
+  @media (max-width: 520px) { .blob { width: 190px; top: 70px; right: -34px; } }
+  @media (prefers-reduced-motion: reduce) { .fill { animation: none; } }
+</style>
+</head>
+<body>
+<main>
+  <nav><span>PixelLies</span><span>Real or AI</span></nav>
+
+  <header>
+    <svg class="blob" viewBox="0 0 400 360" aria-hidden="true">
+      <defs>
+        <linearGradient id="chrome" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#E5E4E2"/>
+          <stop offset=".28" stop-color="#9b8fb8"/>
+          <stop offset=".45" stop-color="#E6E0F0"/>
+          <stop offset=".68" stop-color="#4a3224"/>
+          <stop offset=".85" stop-color="#b9aed0"/>
+          <stop offset="1" stop-color="#E5E4E2"/>
+        </linearGradient>
+        <radialGradient id="shine" cx=".3" cy=".25" r=".5">
+          <stop offset="0" stop-color="#fff" stop-opacity=".8"/>
+          <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <path d="M70 190c-30-60 20-140 110-150 70-8 90 30 130 20 50-12 85 25 70 80-12 45-60 50-80 85-25 45-80 70-135 45-45-20-70-30-95-80z" fill="url(#chrome)"/>
+      <path d="M70 190c-30-60 20-140 110-150 70-8 90 30 130 20 50-12 85 25 70 80-12 45-60 50-80 85-25 45-80 70-135 45-45-20-70-30-95-80z" fill="url(#shine)"/>
+      <ellipse cx="215" cy="175" rx="48" ry="30" fill="#6F4E37" transform="rotate(-18 215 175)"/>
+      <ellipse cx="205" cy="168" rx="38" ry="20" fill="none" stroke="#E6E0F0" stroke-width="2" opacity=".7" transform="rotate(-18 215 175)"/>
+    </svg>
+
+    <p class="eyebrow">Can you tell<br>a photo from a fake?</p>
+    <h1>Pixel<span>Lies</span></h1>
+    <p class="intro">Upload an image. Several models look at the image's colour, edges, noise, frequencies and deep features, then give their verdict.</p>
+  </header>
+
+  <form class="panel" method="post" enctype="multipart/form-data" id="f">
+    <span class="label">Upload image</span>
+    <label class="drop">
+      <b>Choose a photo</b>
+      JPG or PNG
+      <span id="fname"></span>
+      <input type="file" name="image" accept="image/*" required id="pick">
+    </label>
+    <div class="go">
+      <button type="submit" id="go" aria-label="Scan image">&rarr;</button>
+      <span id="gotext">Scan the image</span>
+    </div>
+    {% if error %}<p class="error">{{ error }}</p>{% endif %}
+  </form>
+
+  {% if result %}
+  {% set ai_votes = result|selectattr('verdict','equalto','AI-generated')|list|length %}
+  <section class="panel">
+    <span class="label">Result</span>
+    <img class="shot" src="{{ preview }}" alt="Uploaded image">
+
+    {% set agree = ai_votes == 0 or ai_votes == result|length %}
+    <div class="verdict {{ 'fake' if overall.ai else 'real' }}{{ '' if agree else ' split' }}">
+      <em>{% if overall.ai %}{{ 'Fake detected' if agree else 'Probably AI' }}{% else %}{{ 'Looks real' if agree else 'Probably real' }}{% endif %}</em>
+      <small>{{ ai_votes }} of {{ result|length }} judges say AI-generated &middot; final {{ overall.confidence }}%</small>
+    </div>
+
+    {% for r in result %}
+    <div class="judge">
+      <div class="row"><span>{{ r.model }}</span><span>{{ r.verdict }} &middot; {{ r.confidence }}%</span></div>
+      <div class="bar"><div class="fill {{ 'fake' if r.verdict == 'AI-generated' else 'real' }}" style="--w: {{ r.confidence }}%"></div></div>
+    </div>
+    {% endfor %}
+  </section>
+  {% endif %}
+
+  <p class="foot">Class project &middot; basic image statistics<br>It can be wrong, don't rely on it</p>
+</main>
+
+<script>
+  var pick = document.getElementById('pick'), go = document.getElementById('go');
+  pick.addEventListener('change', function () {
+    document.getElementById('fname').textContent = pick.files.length ? pick.files[0].name : '';
+  });
+  document.getElementById('f').addEventListener('submit', function () {
+    go.disabled = true; document.getElementById('gotext').textContent = 'Scanning...';
+  });
+</script>
+</body>
+</html>
